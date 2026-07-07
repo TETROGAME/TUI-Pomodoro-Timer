@@ -34,6 +34,7 @@ class PomodoroTimer:
         if self.state not in (TimerState.IDLE, TimerState.FINISHED):
             return
         self.started_at = time.monotonic()
+        self.paused_at = None
         self.state = TimerState.RUNNING
 
     def pause(self) -> None:
@@ -55,6 +56,7 @@ class PomodoroTimer:
         if self.started_at is None:
             return -1
         elapsed = 0
+
         match self.state:
             case TimerState.RUNNING:
                 elapsed = time.monotonic() - self.started_at
