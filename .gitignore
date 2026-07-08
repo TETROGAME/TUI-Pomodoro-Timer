@@ -1,0 +1,8 @@
+/.venv/
+TODO.md
+__pycache__/
+*.egg-info/
+dist/
+.pytest_cache/
+*.db
+.nvim.lua
