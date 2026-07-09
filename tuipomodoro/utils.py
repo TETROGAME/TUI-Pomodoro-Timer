@@ -8,5 +8,5 @@ def format_time(raw_time: float) -> str:
 def format_progress_bar(ratio: float, width: int) -> str:
     filled = int(ratio * width)
     empty = width - filled
-    progress_bar = filled * "█" + empty * "░"
+    progress_bar = empty * "█" + filled * "░"
     return progress_bar
