@@ -2,21 +2,12 @@ from math import ceil
 from time import monotonic
 
 from textual.app import App, ComposeResult
+from textual.containers import Center, VerticalGroup
 from textual.reactive import Reactive, reactive
-from textual.widget import Widget
 from textual.widgets import Digits, Footer, Header, Static
-from 
 
 from tuipomodoro.timer import PomodoroTimer, TimerState
 from tuipomodoro.utils import format_time
-
-
-class TimerDisplay(Widget):
-    """A widget to display remaining time"""
-
-    def compose(self) -> ComposeResult:
-        yield Digits(id="time")
-        yield Static(id="progress")
 
 
 class PomodoroTimerApp(App):
@@ -57,5 +48,12 @@ class PomodoroTimerApp(App):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Digits(id="time")
+        yield Center(
+            VerticalGroup(
+                Digits(id="time"),
+                Static(id="progress"),
+                id="clock",
+            ),
+            id="clock-wrapper",
+        )
         yield Footer()
