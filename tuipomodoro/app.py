@@ -3,11 +3,12 @@ from time import monotonic
 
 from textual.app import App, ComposeResult
 from textual.containers import Center, VerticalGroup
+from textual.getters import query_one
 from textual.reactive import Reactive, reactive
 from textual.widgets import Digits, Footer, Header, Static
 
 from tuipomodoro.timer import PomodoroTimer, TimerState
-from tuipomodoro.utils import format_time
+from tuipomodoro.utils import format_progress_bar, format_time
 
 
 class PomodoroTimerApp(App):
@@ -28,6 +29,10 @@ class PomodoroTimerApp(App):
         self.remaining = self.timer.duration
         self.timer_state = self.timer.state
 
+        target_width = self.query_one("#time", Digits).size.width
+        self.query_one("#progress", Static).update(
+            format_progress_bar(1, width=target_width)
+        )
         now = monotonic()
         self.set_timer(ceil(now) - now, self._start_interval)
 
@@ -37,6 +42,11 @@ class PomodoroTimerApp(App):
 
     def watch_remaining(self, old: float, new: float) -> None:
         self.query_one("#time", Digits).update(format_time(new))
+        ratio = 1 - new / self.timer.duration
+        target_width = self.query_one("#time", Digits).size.width
+        self.query_one("#progress", Static).update(
+            format_progress_bar(ratio, width=target_width)
+        )
 
     def _start_interval(self) -> None:
         self.update_time()
