@@ -2,7 +2,7 @@ from math import ceil
 from time import monotonic
 
 from textual.app import App, ComposeResult
-from textual.reactive import reactive
+from textual.reactive import Reactive, reactive
 from textual.widget import Widget
 from textual.widgets import Digits, Footer, Header, Static
 
@@ -21,9 +21,11 @@ class TimerDisplay(Widget):
 class PomodoroTimerApp(App):
     """A textual Pomodoro Timer with audio playback support"""
 
+    CSS_PATH = "PomodoroTimerApp.tcss"
+
     timer: PomodoroTimer
-    remaining = reactive(0.0)
-    timer_state = reactive(TimerState.IDLE)
+    remaining: Reactive[float] = reactive(0.0)
+    timer_state: Reactive[TimerState] = reactive(TimerState.IDLE)
 
     def __init__(self, timer: PomodoroTimer, **kwargs):
         super().__init__(**kwargs)
@@ -37,6 +39,10 @@ class PomodoroTimerApp(App):
         now = monotonic()
         self.set_timer(ceil(now) - now, self._start_interval)
 
+    def watch_timer_state(self, old: TimerState, new: TimerState) -> None:
+        if new == TimerState.FINISHED:
+            self.query_one("#progress", Static).update("done!")
+
     def watch_remaining(self, old: float, new: float) -> None:
         self.query_one("#time", Digits).update(format_time(new))
 
@@ -46,6 +52,7 @@ class PomodoroTimerApp(App):
 
     def update_time(self) -> None:
         self.remaining = self.timer.get_remaining()
+        self.timer_state = self.timer.state
 
     def compose(self) -> ComposeResult:
         yield Header()
