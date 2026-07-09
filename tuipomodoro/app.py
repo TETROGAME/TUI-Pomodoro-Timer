@@ -32,7 +32,7 @@ class PomodoroTimerApp(App):
         now = monotonic()
         self.set_timer(ceil(now) - now, self._start_interval)
 
-        base_width = 24 # length of Digits displaying "00:00:00"
+        base_width = 24
         self.query_one("#progress", Static).update(
             format_progress_bar(0, width=max(base_width, 10))
         )
