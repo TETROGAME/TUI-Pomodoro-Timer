@@ -1,0 +1,20 @@
+#clock-wrapper {
+  height: 1fr;
+  align: center middle;
+}
+
+#clock {
+  width: auto;
+  height: auto;
+  align-horizontal: center;
+}
+
+#time {
+  width: auto;
+  text-align: center;
+}
+
+#progress {
+  width: auto;
+  text-align: center;
+}

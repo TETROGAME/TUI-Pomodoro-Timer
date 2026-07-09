@@ -5,6 +5,7 @@ from textual.app import App, ComposeResult
 from textual.reactive import Reactive, reactive
 from textual.widget import Widget
 from textual.widgets import Digits, Footer, Header, Static
+from 
 
 from tuipomodoro.timer import PomodoroTimer, TimerState
 from tuipomodoro.utils import format_time
@@ -56,5 +57,5 @@ class PomodoroTimerApp(App):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield TimerDisplay(id="clock")
+        yield Digits(id="time")
         yield Footer()
