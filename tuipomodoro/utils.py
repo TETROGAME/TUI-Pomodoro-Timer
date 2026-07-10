@@ -1,7 +1,5 @@
 from typing import Any, Dict
 
-from tuipomodoro.config import Settings
-
 
 def format_time(raw_time: float) -> str:
     seconds = int(raw_time % 60)
@@ -18,6 +16,8 @@ def format_progress_bar(ratio: float, width: int) -> str:
 
 
 def format_toml(data: Dict[str, Any]) -> Dict[str, Any]:
+    from tuipomodoro.config import Settings
+
     validated = dict()
     for key, value in data:
         if key in Settings.__dataclass_fields__:
