@@ -72,7 +72,9 @@ class PomodoroTimer:
             return TimerSnapshot(TimerState.FINISHED, 0.0)
         if self.state == TimerState.PAUSED:
             if self.paused_at is None:
-                raise RuntimeError("Invariant violation: paused timer must have paused_at")
+                raise RuntimeError(
+                    "Invariant violation: paused timer must have paused_at"
+                )
             elapsed = self.paused_at - self.started_at
             remaining = self.duration - elapsed
             if remaining <= 0:
@@ -105,3 +107,9 @@ class PomodoroTimer:
     def get_remaining(self, now: float | None = None) -> float:
         """Return remaining time in seconds as a pure read operation."""
         return self.snapshot(now).remaining
+
+    def reset(self) -> None:
+        """Resets timer to IDLE state without duration change"""
+        self.started_at = None
+        self.paused_at = None
+        self.state = TimerState.IDLE

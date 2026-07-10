@@ -1,4 +1,5 @@
 from math import ceil
+from os import wait
 from time import monotonic
 
 from textual.app import App, ComposeResult
@@ -16,7 +17,10 @@ class PomodoroTimerApp(App):
 
     CSS_PATH = "PomodoroTimerApp.tcss"
 
-    BINDINGS = [("space", "switch_state()", "Pause/resume timer")]
+    BINDINGS = [
+        ("space", "switch_state()", "Pause/resume timer"),
+        ("r", "reset_timer()", "Reset timer"),
+    ]
 
     timer: PomodoroTimer
     remaining: Reactive[float] = reactive(0.0)
@@ -41,8 +45,9 @@ class PomodoroTimerApp(App):
         )
 
     def watch_timer_state(self, old: TimerState, new: TimerState) -> None:
+        self.sub_title = str(self.timer.state.name)
         if new == TimerState.FINISHED:
-            self.query_one("#progress", Static).update("done!")
+            ...
 
     def watch_remaining(self, old: float, new: float) -> None:
         self.query_one("#time", Digits).update(format_time(new))
@@ -110,6 +115,13 @@ class PomodoroTimerApp(App):
         snapshot = self.timer.tick(monotonic())
         self.timer_state = snapshot.state
         self.remaining = snapshot.remaining
+
+    def action_reset_timer(self) -> None:
+        self.timer.reset()
+        snapshot = self.timer.tick(monotonic())
+        self.timer_state = snapshot.state
+        self.remaining = snapshot.remaining
+        self._stop_tick_loop()
 
     def compose(self) -> ComposeResult:
         yield Header()
