@@ -3,7 +3,7 @@ from tuipomodoro.timer import PomodoroTimer
 
 
 def main():
-    timer = PomodoroTimer(duration=(5))
+    timer = PomodoroTimer()
     app = PomodoroTimerApp(timer)
     app.run()
 

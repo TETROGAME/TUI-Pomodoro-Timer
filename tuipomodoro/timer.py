@@ -36,7 +36,7 @@ class PomodoroTimer:
     paused_at: float | None
     state: TimerState
 
-    def __init__(self, duration: float):
+    def __init__(self, duration: float = 5):
         self.duration = duration
         self.started_at = None
         self.paused_at = None
