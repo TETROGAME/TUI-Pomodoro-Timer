@@ -37,7 +37,7 @@ class PomodoroTimerApp(App):
 
         base_width = 24
         self.query_one("#progress", Static).update(
-            format_progress_bar(1, width=max(base_width, 10))
+            format_progress_bar(0, width=max(base_width, 10))
         )
 
     def watch_timer_state(self, old: TimerState, new: TimerState) -> None:
