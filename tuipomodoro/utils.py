@@ -1,7 +1,8 @@
 def format_time(raw_time: float) -> str:
-    seconds = int(raw_time % 60)
-    minutes = int(raw_time // 60) % 60
-    hours = int(raw_time // 3600)
+    total_secs = max(0, round(raw_time))
+    seconds = total_secs % 60
+    minutes = (total_secs // 60) % 60
+    hours = total_secs // 3600
     return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 
