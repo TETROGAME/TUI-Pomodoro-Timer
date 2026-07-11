@@ -1,9 +1,11 @@
+import asyncio
 from time import monotonic
 
+from textual import work
 from textual.app import App, ComposeResult
+from textual.worker import Worker
 from textual.containers import Center, VerticalGroup
 from textual.reactive import Reactive, reactive
-from textual.timer import Timer
 from textual.widgets import Digits, Footer, Header, Label, Static
 
 from tuipomodoro.config import Settings
@@ -29,7 +31,7 @@ class PomodoroTimerApp(App):
         super().__init__(**kwargs)
         self.manager = manager
         self.settings = settings
-        self._tick_timer: Timer | None = None
+        self._clock_worker: Worker | None = None
 
     def _apply_visibility(self) -> None:
         self.query_one(Header).visible = self.settings.show_header
@@ -47,6 +49,20 @@ class PomodoroTimerApp(App):
         self.query_one("#cycle_name", Label).update(
             phase_label[self.manager.current_phase]
         )
+
+    def _sync_ui(self) -> None:
+        """Immediate UI sync from current timer state without ticking."""
+        snapshot = self.manager.snapshot()
+        self.remaining = snapshot.remaining
+        self.timer_state = snapshot.state
+
+    def _start_clock(self) -> None:
+        self._clock_worker = self._run_clock()
+
+    def _stop_clock(self) -> None:
+        if self._clock_worker is not None:
+            self._clock_worker.cancel()
+            self._clock_worker = None
 
     def on_mount(self) -> None:
         self._apply_visibility()
@@ -76,69 +92,38 @@ class PomodoroTimerApp(App):
             format_progress_bar(ratio, width=target_width)
         )
 
-    def _tick(self) -> None:
-        """Fire one tick and schedule the next at the next second boundary."""
-        self.update_time()
-        now = monotonic()
-        self._tick_timer = self.set_timer(1.0 - (now % 1.0), self._tick)
-
-    def _stop_tick_loop(self) -> None:
-        """Stop and clear tick timer."""
-        if self._tick_timer is not None:
-            self._tick_timer.stop()
-            self._tick_timer = None
-
-    def _schedule_tick_loop(self) -> None:
-        """Schedule a fresh aligned tick loop."""
-        self._stop_tick_loop()
-        now = monotonic()
-        self._tick_timer = self.set_timer(1.0 - (now % 1.0), self._tick)
-
-    def update_time(self) -> None:
-        """Sync app reactive fields from one timer tick and stop loop when finished."""
-        now = monotonic()
-        old_phase = self.manager.current_phase
-        snapshot = self.manager.tick(now)
-        self.remaining = snapshot.remaining
-        self.timer_state = snapshot.state
-
-        if self.manager.current_phase != old_phase:
-            self._apply_phase()
-
-        if snapshot.state == TimerState.FINISHED:
-            self._stop_tick_loop()
+    @work(exclusive=True)
+    async def _run_clock(self) -> None:
+        """Tick the timer every second."""
+        while True:
+            await asyncio.sleep(1.0)
+            now = monotonic()
+            old_phase = self.manager.current_phase
+            snapshot = self.manager.tick(now)
+            self.remaining = snapshot.remaining
+            self.timer_state = snapshot.state
+            if self.manager.current_phase != old_phase:
+                self._apply_phase()
+            if snapshot.state == TimerState.FINISHED:
+                break
 
     def action_switch_state(self) -> None:
-        """Toggle pause/resume (space binding).
-
-        - If running -> pause
-        - If paused -> resume
-        - If idle or finished -> start a fresh run
-        After changing timer logic, mirror state and remaining into reactive fields
-        so the UI updates immediately.
-        """
+        """Toggle pause/resume (space binding)."""
         if self.manager.state == TimerState.RUNNING:
             self.manager.pause()
-            self._stop_tick_loop()
+            self._stop_clock()
         elif self.manager.state == TimerState.PAUSED:
             self.manager.resume()
-            self._schedule_tick_loop()
+            self._start_clock()
         else:
-            # Idle or Finished -> start/restart
             self.manager.start()
-            self._schedule_tick_loop()
-
-        # Mirror logic into app reactives so watchers fire immediately
-        snapshot = self.manager.tick(monotonic())
-        self.timer_state = snapshot.state
-        self.remaining = snapshot.remaining
+            self._start_clock()
+        self._sync_ui()
 
     def action_reset_timer(self) -> None:
         self.manager.reset()
-        snapshot = self.manager.tick(monotonic())
-        self.timer_state = snapshot.state
-        self.remaining = snapshot.remaining
-        self._stop_tick_loop()
+        self._stop_clock()
+        self._sync_ui()
 
     def compose(self) -> ComposeResult:
         yield Header()
