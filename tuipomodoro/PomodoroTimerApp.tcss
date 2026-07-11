@@ -9,6 +9,11 @@
   align-horizontal: center;
 }
 
+#cycle_name {
+  width: auto;
+  text-align: center;
+}
+
 #time {
   width: auto;
   text-align: center;
