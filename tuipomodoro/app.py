@@ -3,10 +3,10 @@ from time import monotonic
 
 from textual import work
 from textual.app import App, ComposeResult
-from textual.worker import Worker
 from textual.containers import Center, VerticalGroup
 from textual.reactive import Reactive, reactive
 from textual.widgets import Digits, Footer, Header, Label, Static
+from textual.worker import Worker
 
 from tuipomodoro.config import Settings
 from tuipomodoro.timer import CycleManager, CyclePhase, TimerState
@@ -123,6 +123,7 @@ class PomodoroTimerApp(App):
     def action_reset_timer(self) -> None:
         self.manager.reset()
         self._stop_clock()
+        self._apply_phase()
         self._sync_ui()
 
     def compose(self) -> ComposeResult:
