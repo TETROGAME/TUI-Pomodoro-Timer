@@ -45,10 +45,10 @@ class PomodoroTimer:
         self.paused_at = None
         self.state = TimerState.IDLE
 
-    def start(self) -> None:
+    def start(self, at: None | float = None) -> None:
         if self.state not in (TimerState.IDLE, TimerState.FINISHED):
             return
-        self.started_at = time.monotonic()
+        self.started_at = at if at is not None else time.monotonic()
         self.paused_at = None
         self.state = TimerState.RUNNING
 
@@ -136,11 +136,14 @@ class CycleManager:
     def tick(self, now: float | None = None) -> TimerSnapshot:
         snapshot = self.timer.tick(now)
         if snapshot.state == TimerState.FINISHED:
-            self._advance_cycle()
+            self._advance_cycle(now)
             return self.timer.snapshot(now)
         return snapshot
 
-    def _advance_cycle(self) -> None:
+    def snapshot(self, now: float | None = None) -> TimerSnapshot:
+        return self.timer.snapshot(now)
+
+    def _advance_cycle(self, now: float | None = None) -> None:
         if self.current_phase == CyclePhase.TIMER:
             return
 
@@ -156,7 +159,7 @@ class CycleManager:
             self.current_phase = CyclePhase.WORK
             self.timer = self._make_timer(self.settings.work_duration)
 
-        self.timer.start()
+        self.timer.start(at=now)
 
     def start(self) -> None:
         self.timer.start()
