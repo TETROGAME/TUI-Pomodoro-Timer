@@ -1,12 +1,12 @@
 from tuipomodoro.app import PomodoroTimerApp
 from tuipomodoro.config import Settings
-from tuipomodoro.timer import PomodoroTimer
+from tuipomodoro.timer import CycleManager
 
 
 def main():
     settings = Settings.load()
-    timer = PomodoroTimer(settings.timer_duration)
-    app = PomodoroTimerApp(timer, settings)
+    manager = CycleManager(settings)
+    app = PomodoroTimerApp(manager, settings)
     app.run()
 
 
