@@ -122,7 +122,7 @@ class CycleManager:
             self.current_phase = CyclePhase.WORK
             self.timer = self._make_timer(settings.work_duration)
 
-    def _make_timer(self, duration_minutes: int) -> PomodoroTimer:
+    def _make_timer(self, duration_minutes: float) -> PomodoroTimer:
         return PomodoroTimer(duration_minutes * 60)
 
     @property
