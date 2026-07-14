@@ -5,7 +5,9 @@ description = "TUI Pomodoro timer with background music support"
 authors = [
     {name = "Nikita Timoshenko",email = "minecrosoft231231@gmai.com"}
 ]
+
 requires-python = ">=3.13,<4.0"
+
 dependencies = [
     "textual (>=8.2.8,<9.0.0)",
     "textual-dev (>=1.8.0,<2.0.0)",
@@ -19,6 +21,9 @@ dev = [
     "pytest (>=9.1.1,<10.0.0)"
 ]
 
+
+[project.scripts]
+tuipomodoro = "tuipomodoro.__main__:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
