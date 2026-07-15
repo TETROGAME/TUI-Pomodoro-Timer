@@ -19,29 +19,29 @@ This project uses [Poetry](https://python-poetry.org/) for dependency management
 
 1. Install Poetry:
 
-```bash
-curl -sSL https://install.python-poetry.org | python3 -
-```
+   ```bash
+   curl -sSL https://install.python-poetry.org | python3 -
+   ```
 
 1. Clone repository:
 
-```bash
-cd desired_destination
-git clone https://github.com/TETROGAME/TUI-Pomodoro-Timer.git
-cd TUI-Pomodoro-Timer
-```
+   ```bash
+   cd desired_destination
+   git clone https://github.com/TETROGAME/TUI-Pomodoro-Timer.git
+   cd TUI-Pomodoro-Timer
+   ```
 
 1. Install dependencies:
 
-```bash
-poetry install
-```
+   ```bash
+   poetry install
+   ```
 
-1. Run
+1. Run:
 
-```bash
-poetry run tuipomodoro
-```
+   ```bash
+   poetry run tuipomodoro
+   ```
 
 ---
 
