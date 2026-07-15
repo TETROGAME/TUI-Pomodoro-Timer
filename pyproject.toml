@@ -3,7 +3,7 @@ name = "tuipomodoro"
 version = "0.1.0"
 description = "TUI Pomodoro timer with background music support"
 authors = [
-    {name = "Nikita Timoshenko",email = "minecrosoft231231@gmai.com"}
+    {name = "Nikita Timoshenko",email = "minecrosoft231231@gmail.com"}
 ]
 
 requires-python = ">=3.13,<4.0"
