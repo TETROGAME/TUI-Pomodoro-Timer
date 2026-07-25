@@ -111,7 +111,20 @@ class PomodoroTimerApp(App):
                 self._apply_phase()
                 self.audio.on_phase_change(self.manager.current_phase)
             if snapshot.state == TimerState.FINISHED:
+                self.audio.play_effect(self.settings.final_tick_effect_file)
                 break
+            if self.manager.duration > 0 and snapshot.state == TimerState.RUNNING:
+                if self.settings.tick_mode == "percent":
+                    ratio = snapshot.remaining / self.manager.duration
+                    if ratio <= self.settings.warning_tick_threshold:
+                        self.audio.play_effect(self.settings.warning_tick_effect_file)
+                    elif ratio <= self.settings.tick_threshold:
+                        self.audio.play_effect(self.settings.tick_effect_file)
+                else:
+                    if snapshot.remaining <= self.settings.warning_tick_threshold:
+                        self.audio.play_effect(self.settings.warning_tick_effect_file)
+                    elif snapshot.remaining <= self.settings.tick_threshold:
+                        self.audio.play_effect(self.settings.tick_effect_file)
 
     def action_switch_state(self) -> None:
         """Toggle pause/resume (space binding)."""
