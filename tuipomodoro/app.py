@@ -8,6 +8,7 @@ from textual.reactive import Reactive, reactive
 from textual.widgets import Digits, Footer, Header, Label, Static
 from textual.worker import Worker
 
+from tuipomodoro.audio import AudioManager
 from tuipomodoro.config import Settings
 from tuipomodoro.timer import CycleManager, CyclePhase, TimerState
 from tuipomodoro.utils import format_progress_bar, format_time
@@ -32,6 +33,7 @@ class PomodoroTimerApp(App):
         self.manager = manager
         self.settings = settings
         self._clock_worker: Worker | None = None
+        self.audio = AudioManager(settings)
 
     def _apply_visibility(self) -> None:
         self.query_one(Header).visible = self.settings.show_header
@@ -77,6 +79,9 @@ class PomodoroTimerApp(App):
             format_progress_bar(0, width=max(base_width, 10))
         )
 
+    def on_unmount(self) -> None:
+        self.audio.shutdown()
+
     def watch_timer_state(self, old: TimerState, new: TimerState) -> None:
         self.sub_title = str(self.manager.state.name)
 
@@ -104,6 +109,7 @@ class PomodoroTimerApp(App):
             self.timer_state = snapshot.state
             if self.manager.current_phase != old_phase:
                 self._apply_phase()
+                self.audio.on_phase_change(self.manager.current_phase)
             if snapshot.state == TimerState.FINISHED:
                 break
 
@@ -112,17 +118,21 @@ class PomodoroTimerApp(App):
         if self.manager.state == TimerState.RUNNING:
             self.manager.pause()
             self._stop_clock()
+            self.audio.pause()
         elif self.manager.state == TimerState.PAUSED:
             self.manager.resume()
             self._start_clock()
+            self.audio.resume()
         else:
             self.manager.start()
             self._start_clock()
+            self.audio.on_phase_change(self.manager.current_phase)
         self._sync_ui()
 
     def action_reset_timer(self) -> None:
         self.manager.reset()
         self._stop_clock()
+        self.audio.reset()
         self._apply_phase()
         self._sync_ui()
 
