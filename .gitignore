@@ -4,5 +4,6 @@ __pycache__/
 *.egg-info/
 dist/
 .pytest_cache/
+.opencode/
 *.db
 .nvim.lua
