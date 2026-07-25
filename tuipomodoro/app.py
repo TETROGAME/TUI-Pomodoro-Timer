@@ -108,10 +108,10 @@ class PomodoroTimerApp(App):
             self.remaining = snapshot.remaining
             self.timer_state = snapshot.state
             if self.manager.current_phase != old_phase:
+                self.audio.play_effect(self.settings.final_tick_effect_file)
                 self._apply_phase()
                 self.audio.on_phase_change(self.manager.current_phase)
             if snapshot.state == TimerState.FINISHED:
-                self.audio.play_effect(self.settings.final_tick_effect_file)
                 break
             if self.manager.duration > 0 and snapshot.state == TimerState.RUNNING:
                 if self.settings.tick_mode == "percent":
