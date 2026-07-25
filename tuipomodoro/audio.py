@@ -293,13 +293,17 @@ class AudioManager:
             return self._sound_cache[name]
         return self._load_and_cache(name, path)
 
-    def play_ambiance(self, name: str, path: Path, fade_ms: int = 500) -> None:
+    def play_ambiance(self, name: str, path: Path, fade_ms: int | None = None) -> None:
+        if fade_ms is None:
+            fade_ms = self.settings.fade_switch_duration
         samples = self._get_or_load(name, path)
         self._commands.put(
             ("play_ambiance", name, samples, self.settings.audio_volume, fade_ms)
         )
 
-    def stop_ambiance(self, fade_ms: int = 500) -> None:
+    def stop_ambiance(self, fade_ms: int | None = None) -> None:
+        if fade_ms is None:
+            fade_ms = self.settings.fade_switch_duration
         self._commands.put(("stop_ambiance", fade_ms))
 
     def play_effect(self, name: str) -> None:
@@ -340,11 +344,11 @@ class AudioManager:
                 self.stop_ambiance()
 
     def pause(self) -> None:
-        fade_samples = int(80 / 1000 * self.SAMPLERATE)
+        fade_samples = int(self.settings.fade_pause_duration / 1000 * self.SAMPLERATE)
         self._commands.put(("pause_fade", fade_samples))
 
     def resume(self) -> None:
-        fade_samples = int(80 / 1000 * self.SAMPLERATE)
+        fade_samples = int(self.settings.fade_pause_duration / 1000 * self.SAMPLERATE)
         self._commands.put(("resume_fade", fade_samples))
 
     def reset(self) -> None:

@@ -61,6 +61,8 @@ class Settings:
     tick_mode: str = toml_field("seconds", "audio")  # "percent" or "seconds"
     tick_threshold: float = toml_field(10.0, "audio")  # seconds or percentage (0.0-1.0)
     warning_tick_threshold: float = toml_field(3.0, "audio")  # seconds or percentage (0.0-1.0)
+    fade_switch_duration: int = toml_field(500, "audio")  # ms, phase switch fade
+    fade_pause_duration: int = toml_field(80, "audio")  # ms, pause/resume fade
 
     @classmethod
     def load(cls, config_path: Optional[Path] = None) -> "Settings":
