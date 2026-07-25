@@ -50,6 +50,13 @@ class Settings:
     # audio
     audio_enabled: bool = toml_field(True, "audio")
     audio_volume: float = toml_field(0.8, "audio")
+    work_ambiance_file: str = toml_field(
+        "ambiance/brown_noise.ogg", "audio"
+    )
+    break_ambiance_file: str = toml_field("", "audio")
+    timer_ambiance_file: str = toml_field("", "audio")
+    tick_effect_file: str = toml_field("effects/tick.mp3", "audio")
+    final_tick_effect_file: str = toml_field("effects/final_tick.mp3", "audio")
 
     @classmethod
     def load(cls, config_path: Optional[Path] = None) -> "Settings":
