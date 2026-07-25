@@ -55,8 +55,12 @@ class Settings:
     )
     break_ambiance_file: str = toml_field("", "audio")
     timer_ambiance_file: str = toml_field("", "audio")
-    tick_effect_file: str = toml_field("effects/tick.mp3", "audio")
+    tick_effect_file: str = toml_field("effects/countdown_tick.mp3", "audio")
+    warning_tick_effect_file: str = toml_field("effects/warning_tick.mp3", "audio")
     final_tick_effect_file: str = toml_field("effects/final_tick.mp3", "audio")
+    tick_mode: str = toml_field("seconds", "audio")  # "percent" or "seconds"
+    tick_threshold: float = toml_field(10.0, "audio")  # seconds or percentage (0.0-1.0)
+    warning_tick_threshold: float = toml_field(3.0, "audio")  # seconds or percentage (0.0-1.0)
 
     @classmethod
     def load(cls, config_path: Optional[Path] = None) -> "Settings":
