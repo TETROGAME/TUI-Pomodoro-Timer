@@ -295,6 +295,7 @@ class AudioManager:
 
     def reset(self) -> None:
         self._commands.put(("reset",))
+        self._commands.put(("set_paused", False))
 
     def set_category_gain(
         self, category: str, level: float, fade_ms: int = 200
