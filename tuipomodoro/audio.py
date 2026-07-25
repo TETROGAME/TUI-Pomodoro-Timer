@@ -245,9 +245,7 @@ class AudioManager:
 
     def play_ambiance(self, name: str, path: Path, fade_ms: int = 500) -> None:
         samples = self._get_or_load(name, path)
-        self._commands.put(
-            ("play_ambiance", name, samples, self.settings.audio_volume)
-        )
+        self._commands.put(("play_ambiance", name, samples, self.settings.audio_volume))
 
     def stop_ambiance(self, fade_ms: int = 500) -> None:
         self._commands.put(("stop_ambiance",))
@@ -258,9 +256,7 @@ class AudioManager:
         if not path.exists():
             return
         samples = self._get_or_load(name, path)
-        self._commands.put(
-            ("play_effect", name, samples, self.settings.audio_volume)
-        )
+        self._commands.put(("play_effect", name, samples, self.settings.audio_volume))
 
     def on_phase_change(self, new_phase: CyclePhase) -> None:
         if not self.enabled:
