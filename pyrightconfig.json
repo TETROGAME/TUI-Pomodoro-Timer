@@ -1,4 +1,6 @@
 {
-  "venvPath": ".",
-  "venv": ".venv"
+  "include": ["tuipomodoro"],
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "pythonVersion": "3.13"
 }
